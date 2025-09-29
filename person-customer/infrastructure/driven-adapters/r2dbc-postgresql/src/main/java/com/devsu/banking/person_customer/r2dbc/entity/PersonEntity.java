@@ -1,0 +1,64 @@
+package com.devsu.banking.person_customer.r2dbc.entity;
+
+
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.UUID;
+
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "persona", schema = "public") // Un nombre de tabla más convencional
+public class PersonEntity {
+
+    @Id
+    private UUID id;
+
+    @NotBlank
+    private String name;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Gender genre;
+
+    @NotNull
+    @Past
+    private LocalDate dateOfBirth;
+
+    @NotBlank
+    @Column(unique = true)
+    private String codeId;
+
+    @NotBlank
+    private String address;
+
+    @NotBlank
+    private String telephone;
+
+    @CreatedDate
+    private Instant createdAt;
+
+    @LastModifiedDate
+    private Instant updatedAt;
+
+    public enum Gender {
+        MALE, FEMALE, OTHER
+    }
+}
