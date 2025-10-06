@@ -15,6 +15,7 @@ import org.mapstruct.ReportingPolicy;
 )
 public interface CustomerMapper {
 
+
     Customer toModel(CustomerEntity entity);
 
     @Mapping(target = "id", source = "entity.id")
@@ -27,6 +28,7 @@ public interface CustomerMapper {
     @Mapping(target = "id", source = "id")
     @Mapping(target = "personId", source = "personData.personId")
     @Mapping(target = "username", source = "userId")
+    @Mapping(source = "personData.age", target = "person.dateOfBirth")
     CustomerEntity toEntity(Customer model);
 
     void partialUpdate(Customer dto, @MappingTarget CustomerEntity entity);

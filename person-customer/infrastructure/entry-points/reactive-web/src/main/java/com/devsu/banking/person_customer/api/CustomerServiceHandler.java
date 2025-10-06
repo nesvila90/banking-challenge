@@ -1,10 +1,10 @@
 package com.devsu.banking.person_customer.api;
 
 import com.devsu.banking.person_customer.api.dto.UpdateCustomerRequestDTO;
-import com.devsu.banking.person_customer.model.command.CreateCustomerCommand;
-import com.devsu.banking.person_customer.model.command.RemoveCustomerByIdCommand;
-import com.devsu.banking.person_customer.model.command.UpdateCustomerCommand;
-import com.devsu.banking.person_customer.model.query.GetCustomerByIdQuery;
+import com.devsu.banking.person_customer.model.cqrs.command.CreateCustomerCommand;
+import com.devsu.banking.person_customer.model.cqrs.command.RemoveCustomerByIdCommand;
+import com.devsu.banking.person_customer.model.cqrs.command.UpdateCustomerCommand;
+import com.devsu.banking.person_customer.model.cqrs.query.GetCustomerByIdQuery;
 import com.devsu.banking.person_customer.usecase.CreateCustomerUseCase;
 import com.devsu.banking.person_customer.usecase.GetCustomerByIdUseCase;
 import com.devsu.banking.person_customer.usecase.RemoveCustomerByIdUseCase;

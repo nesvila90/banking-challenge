@@ -15,6 +15,7 @@ public interface PersonMapper {
 
     Person toModel(PersonEntity entity);
 
+    @Mapping(source = "age", target = "dateOfBirth")
     @Mapping(source = "codeId", target = "codeId")
     PersonEntity toEntity(Person model);
 

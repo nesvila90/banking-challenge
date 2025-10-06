@@ -1,4 +1,4 @@
-package com.devsu.banking.person_customer.model.command;
+package com.devsu.banking.person_customer.model.cqrs.command;
 
 
 import com.devsu.banking.person_customer.model.customer.Customer;

@@ -1,8 +1,8 @@
 package com.devsu.banking.person_customer.usecase;
 
+import com.devsu.banking.person_customer.model.cqrs.query.GetCustomerByIdQuery;
 import com.devsu.banking.person_customer.model.customer.Customer;
 import com.devsu.banking.person_customer.model.customer.gateways.CustomerPersistenceGateway;
-import com.devsu.banking.person_customer.model.query.GetCustomerByIdQuery;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 

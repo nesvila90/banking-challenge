@@ -1,8 +1,5 @@
 package com.devsu.banking.person_customer.r2dbc.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -12,6 +9,9 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -26,14 +26,14 @@ public class CustomerEntity {
     private UUID id;
 
     @NotNull
-    @Column(unique = true, name = "person_id")
+    @Column("person_id")
     private UUID personId;
 
     @Transient
     private PersonEntity person;
 
     @NotBlank
-    @Column(unique = true)
+    @Column("username")
     private String username;
 
     @NotBlank

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Getter
@@ -16,7 +17,7 @@ public class Person {
     private String name;
     private String codeId;
     private String genre;
-    private Integer age;
+    private LocalDate age;
     private String address;
     private String telephone;
     private String personId;

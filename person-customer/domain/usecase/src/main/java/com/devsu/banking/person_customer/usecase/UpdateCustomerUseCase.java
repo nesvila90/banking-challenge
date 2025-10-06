@@ -1,6 +1,6 @@
 package com.devsu.banking.person_customer.usecase;
 
-import com.devsu.banking.person_customer.model.command.UpdateCustomerCommand;
+import com.devsu.banking.person_customer.model.cqrs.command.UpdateCustomerCommand;
 import com.devsu.banking.person_customer.model.customer.Customer;
 import com.devsu.banking.person_customer.model.customer.gateways.CustomerPersistenceGateway;
 import lombok.RequiredArgsConstructor;

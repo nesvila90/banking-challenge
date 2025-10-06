@@ -1,12 +1,12 @@
 package com.devsu.banking.person_customer.r2dbc.repositories;
 
-import com.devsu.banking.person_customer.model.command.CreateCustomerCommand;
-import com.devsu.banking.person_customer.model.command.RemoveCustomerByIdCommand;
-import com.devsu.banking.person_customer.model.command.UpdateCustomerCommand;
 import com.devsu.banking.person_customer.model.commons.exceptions.BusinessException;
+import com.devsu.banking.person_customer.model.cqrs.command.CreateCustomerCommand;
+import com.devsu.banking.person_customer.model.cqrs.command.RemoveCustomerByIdCommand;
+import com.devsu.banking.person_customer.model.cqrs.command.UpdateCustomerCommand;
+import com.devsu.banking.person_customer.model.cqrs.query.GetCustomerByIdQuery;
 import com.devsu.banking.person_customer.model.customer.Customer;
 import com.devsu.banking.person_customer.model.customer.gateways.CustomerPersistenceGateway;
-import com.devsu.banking.person_customer.model.query.GetCustomerByIdQuery;
 import com.devsu.banking.person_customer.r2dbc.entity.CustomerEntity;
 import com.devsu.banking.person_customer.r2dbc.entity.PersonEntity;
 import com.devsu.banking.person_customer.r2dbc.mapper.CustomerMapper;
@@ -14,6 +14,7 @@ import com.devsu.banking.person_customer.r2dbc.mapper.PersonMapper;
 import com.devsu.banking.person_customer.r2dbc.repositories.customer.CustomerRepositoryGateway;
 import com.devsu.banking.person_customer.r2dbc.repositories.person.PersonRepositoryGateway;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Mono;
@@ -23,6 +24,7 @@ import static com.devsu.banking.person_customer.model.commons.exceptions.message
 import static com.devsu.banking.person_customer.model.commons.exceptions.messages.BusinessErrorMessage.CUSTOMER_NOT_FOUND;
 import static com.devsu.banking.person_customer.model.commons.exceptions.messages.BusinessErrorMessage.PERSON_ASSOCIATED_TO_CUSTOMER_NOT_FOUND;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class CustomerPersistenceAdapter implements CustomerPersistenceGateway {
@@ -94,7 +96,10 @@ public class CustomerPersistenceAdapter implements CustomerPersistenceGateway {
     private Mono<Void> validatePersonDoesNotExist(String codeId) {
         return personRepositoryGateway.findByCodeId(codeId)
                 .hasElement()
-                .flatMap(exists -> Boolean.TRUE.equals(exists) ? Mono.error(new BusinessException(CUSTOMER_ALREADY_EXIST)) : Mono.empty());
+                .flatMap(exists -> Boolean.TRUE.equals(exists) ? Mono.error(new BusinessException(CUSTOMER_ALREADY_EXIST)) : Mono.empty())
+                .doOnError(throwable -> log.error("Error validating if exist Person registered: {}", codeId, throwable))
+                .then();
+
     }
 
     private Mono<PersonEntity> savePerson(PersonEntity person) {

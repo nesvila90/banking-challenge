@@ -1,10 +1,6 @@
 package com.devsu.banking.person_customer.r2dbc.entity;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
@@ -15,6 +11,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -35,7 +32,6 @@ public class PersonEntity {
     private String name;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
     private Gender genre;
 
     @NotNull
@@ -43,7 +39,6 @@ public class PersonEntity {
     private LocalDate dateOfBirth;
 
     @NotBlank
-    @Column(unique = true)
     private String codeId;
 
     @NotBlank
