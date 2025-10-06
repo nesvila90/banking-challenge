@@ -11,7 +11,6 @@ import com.devsu.banking.account_movements.r2dbc.repositories.account.AccountRep
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
@@ -26,8 +25,6 @@ public class AccountAdapterRepository implements AccountsRepositoryGateway {
 
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
-    private final TransactionalOperator transactionalOperator;
-
 
     @Override
     public Mono<AccountSnapshot> findActiveAccountsByNumberAndType(AccountID accountNumber, AccountType accountType) {
@@ -47,21 +44,40 @@ public class AccountAdapterRepository implements AccountsRepositoryGateway {
                 .map(accountMapper::toDomain);
     }
 
-    public Mono<AccountSnapshot> updateAccount(Account account) {
-
+    @Override
+    public Mono<AccountSnapshot> updateAccountStatus(Account account) {
         var accountNumber = account.getAccountNumber();
         var accountType = account.getType().name();
 
-        var accountStatus = switch (account.getStatus()) {
-            case ACTIVE -> true;
-            case INACTIVE, SUSPENDED -> false;
-        };
-
-        return accountRepository.findByAccountNumberAndAccountTypeAndStatus(accountNumber, accountType, accountStatus)
+        return accountRepository.findByAccountNumberAndAccountType(accountNumber, accountType)
                 .switchIfEmpty(Mono.error(new BusinessException(ACCOUNT_NOT_FOUND)))
                 .doOnNext(accountFounded -> accountMapper.partialUpdate(account, accountFounded))
                 .flatMap(accountRepository::save)
                 .timeout(Duration.ofSeconds(5))
                 .map(accountMapper::toDomain);
     }
+
+    @Override
+    public Mono<AccountSnapshot> updateAccount(Account account) {
+
+        var accountNumber = account.getAccountNumber();
+        var accountType = account.getType().name();
+
+        var status = resolveStatus(account);
+        return accountRepository.findByAccountNumberAndAccountTypeAndStatus(accountNumber, accountType, status)
+                .switchIfEmpty(Mono.error(new BusinessException(ACCOUNT_NOT_FOUND)))
+                .doOnNext(accountFounded -> accountMapper.partialUpdate(account, accountFounded))
+                .flatMap(accountRepository::save)
+                .timeout(Duration.ofSeconds(5))
+                .map(accountMapper::toDomain);
+    }
+
+    //private methods
+    private static Boolean resolveStatus(Account account) {
+        return switch (account.getStatus()) {
+            case ACTIVE -> true;
+            case INACTIVE, SUSPENDED -> false;
+        };
+    }
+
 }

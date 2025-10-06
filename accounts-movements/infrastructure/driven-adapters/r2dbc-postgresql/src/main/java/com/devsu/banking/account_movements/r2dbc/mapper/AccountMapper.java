@@ -22,7 +22,6 @@ import java.math.BigDecimal;
 )
 public interface AccountMapper {
 
-    // ===== Crear entidad NUEVA (sin id): initialBalance = balance; currentBalance = balance =====
     @Mapping(source = "id.id", target = "id")
     @Mapping(source = "ownerId.ownerId", target = "ownerId")
     @Mapping(source = "type", target = "accountType")
@@ -45,8 +44,7 @@ public interface AccountMapper {
     @Mapping(source = "ownerId.ownerId", target = "ownerId")
     @Mapping(source = "type", target = "accountType")
     @Mapping(source = "status", target = "status")
-    @Mapping(target = "initialBalance", source = ".", qualifiedByName = "initialIfNew")
-    @Mapping(target = "currentBalance", expression = "java(account.getBalance())")
+    @Mapping(target = "currentBalance", source = "balance")
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
@@ -56,7 +54,7 @@ public interface AccountMapper {
     @Named("initialIfNew")
     default BigDecimal initialIfNew(Account account) {
         boolean isNew = account.getId() == null || account.getId().id() == null;
-        return isNew ?  BigDecimal.ZERO : account.getBalance();
+        return isNew ? BigDecimal.ZERO : account.getBalance();
     }
 
     default String mapAccountType(AccountType t) {

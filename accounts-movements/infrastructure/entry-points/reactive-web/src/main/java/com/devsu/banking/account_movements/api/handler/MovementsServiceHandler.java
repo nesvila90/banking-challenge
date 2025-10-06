@@ -1,7 +1,7 @@
 package com.devsu.banking.account_movements.api.handler;
 
 import com.devsu.banking.account_movements.model.cqrs.command.RegisterMovementCommand;
-import com.devsu.banking.account_movements.usecase.registermovements.RegisterMovementsUseCase;
+import com.devsu.banking.account_movements.usecase.registermovements.movements.RegisterMovementsUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;

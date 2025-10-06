@@ -12,5 +12,7 @@ public interface AccountsRepositoryGateway {
 
     Mono<AccountSnapshot> save(Account createAccountCommand);
 
+    Mono<AccountSnapshot> updateAccountStatus(Account account);
+
     Mono<AccountSnapshot> updateAccount(Account changeAccountDataCommand);
 }

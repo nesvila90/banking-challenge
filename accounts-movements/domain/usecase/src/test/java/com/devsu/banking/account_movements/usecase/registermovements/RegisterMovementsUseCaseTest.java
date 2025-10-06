@@ -12,6 +12,7 @@ import com.devsu.banking.account_movements.model.entities.accounts.ids.OwnerId;
 import com.devsu.banking.account_movements.model.entities.movements.MovementType;
 import com.devsu.banking.account_movements.model.entities.movements.Movements;
 import com.devsu.banking.account_movements.model.entities.movements.gateways.MovementsRepositoryGateway;
+import com.devsu.banking.account_movements.usecase.registermovements.movements.RegisterMovementsUseCase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
