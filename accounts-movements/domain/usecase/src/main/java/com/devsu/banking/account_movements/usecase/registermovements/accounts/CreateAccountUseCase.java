@@ -1,4 +1,4 @@
-package com.devsu.banking.account_movements.usecase.registermovements;
+package com.devsu.banking.account_movements.usecase.registermovements.accounts;
 
 import com.devsu.banking.account_movements.model.cqrs.command.CreateAccountCommand;
 import com.devsu.banking.account_movements.model.entities.accounts.Account;

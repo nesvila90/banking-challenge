@@ -1,4 +1,4 @@
-package com.devsu.banking.account_movements.usecase.registermovements;
+package com.devsu.banking.account_movements.usecase.registermovements.movements;
 
 import com.devsu.banking.account_movements.model.commons.exceptions.BusinessException;
 import com.devsu.banking.account_movements.model.cqrs.command.RegisterMovementCommand;
@@ -22,12 +22,8 @@ public class RegisterMovementsUseCase {
     private final AccountsRepositoryGateway accountsRepositoryGateway;
     private final MovementsRepositoryGateway movementRepositoryGateway;
 
-
-
     public Mono<Movements> handle(RegisterMovementCommand registerMovementCommand) {
-        var accountNumber = registerMovementCommand.accountNumber();
-        var accountType = registerMovementCommand.accountType();
-        return accountsRepositoryGateway.findActiveAccountsByNumberAndType(accountNumber, accountType)
+        return accountsRepositoryGateway.findActiveAccountsByNumberAndType(registerMovementCommand.accountID())
                 .switchIfEmpty(Mono.error(new BusinessException(ACCOUNT_NOT_FOUND)))
                 .map(Account::from)
                 .doOnNext(this::addOverdraftPolicy)

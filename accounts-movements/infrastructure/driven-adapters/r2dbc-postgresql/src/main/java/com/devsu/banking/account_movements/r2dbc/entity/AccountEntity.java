@@ -12,7 +12,7 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -40,8 +40,8 @@ public class AccountEntity {
     private Long version;
     @CreatedDate
     @Column("created_at")
-    private Instant createdAt;
+    private LocalDateTime createdAt;
     @LastModifiedDate
     @Column("updated_at")
-    private Instant updatedAt;
+    private LocalDateTime updatedAt;
 }

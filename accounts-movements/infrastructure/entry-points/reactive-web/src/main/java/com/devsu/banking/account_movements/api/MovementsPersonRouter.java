@@ -6,7 +6,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
+import static org.springframework.web.reactive.function.server.RequestPredicates.PUT;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
@@ -15,9 +17,9 @@ public class MovementsPersonRouter {
     public RouterFunction<ServerResponse> routerFunction(MovementsServiceHandler serviceHandler) {
         return route(
                 POST("/api/movimientos"), serviceHandler::handleRegisterMovementsUseCase)
-                //   .andRoute(PUT("/api/customer/{codeId}"), serviceHandler::handleUpdateCustomerUseCase)
-                //  .andRoute(GET("/api/customer/{codeId}"), serviceHandler::handleGetCustomerByIdUseCase)
-                //.andRoute(DELETE("/api/customer/{codeId}"), serviceHandler::handleRemoveCustomerByIdUseCase)
+                .andRoute(PUT("/api/movimientos"), serviceHandler::handleChangeMovementsDataUseCase)
+                .andRoute(GET("/api/movimientos/{codeId}"), serviceHandler::handleFetchMovementsByAccount)
+                .andRoute(GET("/api/movimientos/reportes"), serviceHandler::handleFetchMovementsGroupedByAccountsByOwner)
                 ;
     }
 }

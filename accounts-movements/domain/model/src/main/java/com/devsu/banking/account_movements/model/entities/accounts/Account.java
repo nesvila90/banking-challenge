@@ -3,6 +3,7 @@ package com.devsu.banking.account_movements.model.entities.accounts;
 import com.devsu.banking.account_movements.model.commons.exceptions.BusinessException;
 import com.devsu.banking.account_movements.model.cqrs.command.RegisterMovementCommand;
 import com.devsu.banking.account_movements.model.entities.accounts.ids.AccountID;
+import com.devsu.banking.account_movements.model.entities.accounts.ids.CustomerId;
 import com.devsu.banking.account_movements.model.entities.accounts.ids.OwnerId;
 import com.devsu.banking.account_movements.model.entities.accounts.policy.OverdraftPolicy;
 import com.devsu.banking.account_movements.model.entities.movements.MovementType;
@@ -29,41 +30,22 @@ public class Account {
     @Getter
     private final AccountType type;
     @Getter
-    private final AccountID id;
+    private AccountID id;
     @Getter
-    private final OwnerId ownerId;
+    private OwnerId ownerId;
     @Getter
     private final String accountNumber;
     @Getter
     private BigDecimal balance;
     private OverdraftPolicy overdraftPolicy;
 
-    public static Account from(AccountSnapshot snapshot) {
-        if (snapshot == null) return null;
-
-        // balance: prioriza currentBalance; si es null usa initialBalance; si ambos son null, usa 0
-        BigDecimal balance = snapshot.getCurrentBalance() != null
-                ? snapshot.getCurrentBalance()
-                : (snapshot.getInitialBalance() != null ? snapshot.getInitialBalance() : BigDecimal.ZERO);
-
-        // Mapear CustomerId -> OwnerId (asumiendo CustomerId.id() : UUID)
-        OwnerId ownerId; // si no hay customer, dejamos ownerId null
-        if (snapshot.getCustomerId() != null) {
-            var id = UUID.fromString(snapshot.getCustomerId().id());
-            ownerId = new OwnerId(id);
-        } else {
-            ownerId = null;
-        }
-
-        // Construcción del agregado
-        return new Account(
-                snapshot.getAccountNumber(),
-                balance,
-                snapshot.getAccountStatus(),   // AccountStatus
-                snapshot.getType(),            // AccountType
-                snapshot.getId(),              // AccountID
-                ownerId                        // OwnerId
-        );
+    public Account(String accountNumber,
+                   AccountStatus status,
+                   AccountType type
+    ) {
+        this.accountNumber = accountNumber;
+        this.status = status;
+        this.type = type;
     }
 
     public Account(String accountNumber,
@@ -84,7 +66,7 @@ public class Account {
         this.overdraftPolicy = overdraftPolicy;
     }
 
-    public Tuple2<Account, Movements> applyMovement(RegisterMovementCommand command, AccountID accountId) {
+    public Tuple2<Account, Movements> applyMovement(RegisterMovementCommand command, AccountID sourceAccountId) {
         var amount = Optional.ofNullable(command.amount())
                 .orElseThrow(() -> new BusinessException(INVALID_AMOUNT));
         var movementType = Optional.ofNullable(command.type())
@@ -93,10 +75,34 @@ public class Account {
         validateAccountToAddMovement();
         calculateNewBalance(balance, amount, movementType);
         validateOverdraft();
-        var movementAdded = addMovement(accountId, movementType, amount);
+        var movementAdded = addMovement(sourceAccountId, movementType, amount);
         return Tuples.of(this, movementAdded);
     }
 
+
+    public static Account from(AccountSnapshot snapshot) {
+        if (snapshot == null) return null;
+        var initialBalance = Optional.ofNullable(snapshot.getInitialBalance()).orElse(ZERO);
+        var balance = Optional.ofNullable(snapshot.getCurrentBalance())
+                .orElse(initialBalance);
+
+        var ownerId = Optional.ofNullable(snapshot.getCustomerId())
+                .map(CustomerId::id)
+                .map(UUID::fromString)
+                .map(OwnerId::new)
+                .orElse(null);
+
+        return new Account(
+                snapshot.getAccountNumber(),
+                balance,
+                snapshot.getAccountStatus(),   // AccountStatus
+                snapshot.getType(),            // AccountType
+                snapshot.getId(),              // AccountID
+                ownerId                        // OwnerId
+        );
+    }
+
+    //private methods
     private Movements addMovement(AccountID accountId, MovementType type, BigDecimal amount) {
         if (amount.signum() <= 0) throw new BusinessException(INVALID_AMOUNT);
         return Movements.builder()
@@ -120,5 +126,6 @@ public class Account {
     private void calculateNewBalance(BigDecimal balance, BigDecimal amount, MovementType type) {
         this.balance = type.equals(DEPOSIT) ? balance.add(amount) : balance.subtract(amount);
     }
+
 
 }

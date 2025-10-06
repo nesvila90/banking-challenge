@@ -11,7 +11,7 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 
@@ -26,7 +26,7 @@ public class MovementEntity {
     @Column("account_id")
     private UUID accountId;
     @Column("at")
-    private Instant at;
+    private LocalDateTime at;
     @Column("movement_type")
     private MovementType movementType;     // DEPOSIT | WITHDRAW
     @Column("amount")
@@ -35,5 +35,5 @@ public class MovementEntity {
     private BigDecimal balanceAfter;
     @CreatedDate
     @Column("created_at")
-    private Instant createdAt;
+    private LocalDateTime createdAt;
 }

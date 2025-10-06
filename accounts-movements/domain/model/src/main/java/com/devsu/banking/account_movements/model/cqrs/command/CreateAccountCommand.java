@@ -1,5 +1,6 @@
 package com.devsu.banking.account_movements.model.cqrs.command;
 
+import com.devsu.banking.account_movements.model.cqrs.Command;
 import com.devsu.banking.account_movements.model.entities.accounts.AccountStatus;
 import com.devsu.banking.account_movements.model.entities.accounts.AccountType;
 
@@ -12,4 +13,5 @@ public record CreateAccountCommand(
         AccountType accountType,
         BigDecimal initialBalance,
         AccountStatus status
-) { }
+) implements Command {
+}

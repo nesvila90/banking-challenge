@@ -1,4 +1,7 @@
 package com.devsu.banking.account_movements.model.cqrs.query;
 
-public record FetchAccountDataQuery() {
+import com.devsu.banking.account_movements.model.cqrs.Query;
+import com.devsu.banking.account_movements.model.entities.accounts.ids.AccountID;
+
+public record FetchAccountDataQuery(AccountID accountID) implements Query {
 }

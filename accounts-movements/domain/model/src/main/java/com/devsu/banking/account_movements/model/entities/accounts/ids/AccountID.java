@@ -1,3 +1,5 @@
 package com.devsu.banking.account_movements.model.entities.accounts.ids;
 
-public record AccountID(String id) { }
+import com.devsu.banking.account_movements.model.entities.accounts.AccountType;
+
+public record AccountID(String id, AccountType accountType)  { }

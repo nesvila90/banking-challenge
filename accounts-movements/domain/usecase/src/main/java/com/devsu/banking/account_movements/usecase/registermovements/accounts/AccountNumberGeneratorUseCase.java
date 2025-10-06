@@ -1,4 +1,4 @@
-package com.devsu.banking.account_movements.usecase.registermovements;
+package com.devsu.banking.account_movements.usecase.registermovements.accounts;
 
 import java.security.SecureRandom;
 

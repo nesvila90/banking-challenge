@@ -12,6 +12,7 @@ import com.devsu.banking.account_movements.model.entities.accounts.ids.OwnerId;
 import com.devsu.banking.account_movements.model.entities.movements.MovementType;
 import com.devsu.banking.account_movements.model.entities.movements.Movements;
 import com.devsu.banking.account_movements.model.entities.movements.gateways.MovementsRepositoryGateway;
+import com.devsu.banking.account_movements.usecase.registermovements.movements.RegisterMovementsUseCase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -46,16 +47,17 @@ class RegisterMovementsUseCaseTest {
     @InjectMocks
     RegisterMovementsUseCase useCase;
 
-    private Account activeAccount(BigDecimal balance, AccountType type) {
-        return createAccount(balance, AccountStatus.ACTIVE, type);
+    private Account activeAccount(BigDecimal balance) {
+        return createAccount(balance, AccountStatus.ACTIVE, AccountType.SAVINGS);
     }
 
-    private Account inactiveAccount(BigDecimal balance, AccountType type) {
-        return createAccount(balance, AccountStatus.INACTIVE, type);
+    private Account inactiveAccount(BigDecimal balance) {
+        return createAccount(balance, AccountStatus.INACTIVE, AccountType.SAVINGS);
     }
 
     private Account createAccount(BigDecimal balance, AccountStatus status, AccountType type) {
-        return new Account(new AccountID("ACC-OK"), balance, status, type, new OwnerId(UUID.randomUUID()));
+        UUID accountId = UUID.randomUUID();
+        return new Account("ACC-OK", balance, status,  type, new AccountID(accountId.toString(), type), new OwnerId(UUID.randomUUID()));
     }
 
     private RegisterMovementCommand cmd(MovementType type, AccountID accountNumber, AccountType accountType, BigDecimal amount) {
@@ -67,7 +69,7 @@ class RegisterMovementsUseCaseTest {
         // Given
         var initial = new BigDecimal("100.00");
         var amount = new BigDecimal("50.00");
-        var acc = activeAccount(initial, AccountType.SAVINGS);
+        var acc = activeAccount(initial);
 
         when(accountsRepo.findActiveAccountsByNumberAndType("ACC-1")).thenReturn(Mono.just(acc));
         // guardados: devolvemos lo mismo (o con id si quieres)
@@ -94,7 +96,7 @@ class RegisterMovementsUseCaseTest {
 
     @Test
     void withdraw_ok_con_fondos_suficientes() {
-        var acc = activeAccount(new BigDecimal("100.00"), AccountType.SAVINGS);
+        var acc = activeAccount(new BigDecimal("100.00"));
 
         when(accountsRepo.findActiveAccountsByNumberAndType("ACC-2")).thenReturn(Mono.just(acc));
         when(accountsRepo.save(any(Account.class))).thenAnswer(inv -> Mono.just(inv.getArgument(0)));
@@ -138,7 +140,7 @@ class RegisterMovementsUseCaseTest {
 
     @Test
     void error_sobregiro_al_retirar() {
-        var acc = activeAccount(new BigDecimal("30.00"), AccountType.SAVINGS);
+        var acc = activeAccount(new BigDecimal("30.00"));
 
         when(accountsRepo.findActiveAccountsByNumberAndType("ACC-3")).thenReturn(Mono.just(acc));
 
@@ -160,7 +162,7 @@ class RegisterMovementsUseCaseTest {
     @Test
     void error_monto_invalido_cero_en_deposito() {
         // Monto 0 -> INVALID_AMOUNT (si la cuenta está activa y con saldo no negativo)
-        var acc = activeAccount(new BigDecimal("100.00"), AccountType.SAVINGS);
+        var acc = activeAccount(new BigDecimal("100.00"));
 
         when(accountsRepo.findActiveAccountsByNumberAndType("ACC-4")).thenReturn(Mono.just(acc));
 
@@ -183,7 +185,7 @@ class RegisterMovementsUseCaseTest {
     @Test
     void error_fondos_insuficientes() {
         // Monto 0 -> INVALID_AMOUNT (si la cuenta está activa y con saldo no negativo)
-        var acc = activeAccount(new BigDecimal("0"), AccountType.SAVINGS);
+        var acc = activeAccount(new BigDecimal("0"));
 
         when(accountsRepo.findActiveAccountsByNumberAndType("ACC-4")).thenReturn(Mono.just(acc));
 
@@ -206,7 +208,7 @@ class RegisterMovementsUseCaseTest {
     @Test
     void error_monto_movimiento_nulo() {
         // Monto 0 -> INVALID_AMOUNT (si la cuenta está activa y con saldo no negativo)
-        var acc = activeAccount(new BigDecimal("10.00"), AccountType.SAVINGS);
+        var acc = activeAccount(new BigDecimal("10.00"));
 
         when(accountsRepo.findActiveAccountsByNumberAndType("ACC-4")).thenReturn(Mono.just(acc));
 
@@ -229,7 +231,7 @@ class RegisterMovementsUseCaseTest {
     @Test
     void error_cuenta_inactiva() {
         // Monto 0 -> INVALID_AMOUNT (si la cuenta está activa y con saldo no negativo)
-        var acc = inactiveAccount(new BigDecimal("0"), AccountType.SAVINGS);
+        var acc = inactiveAccount(new BigDecimal("0"));
 
         when(accountsRepo.findActiveAccountsByNumberAndType("ACC-4")).thenReturn(Mono.just(acc));
 
@@ -252,7 +254,7 @@ class RegisterMovementsUseCaseTest {
     @Test
     void error_cuenta_activa_null_balance() {
         // Monto 0 -> INVALID_AMOUNT (si la cuenta está activa y con saldo no negativo)
-        var acc = activeAccount(null, AccountType.SAVINGS);
+        var acc = activeAccount(null);
 
         when(accountsRepo.findActiveAccountsByNumberAndType("ACC-4")).thenReturn(Mono.just(acc));
 

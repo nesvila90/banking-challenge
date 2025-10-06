@@ -2,15 +2,19 @@ package com.devsu.banking.account_movements.r2dbc.repositories;
 
 import com.devsu.banking.account_movements.model.commons.exceptions.TechnicalException;
 import com.devsu.banking.account_movements.model.commons.exceptions.messages.TechnicalErrorMessage;
+import com.devsu.banking.account_movements.model.entities.accounts.ids.AccountID;
+import com.devsu.banking.account_movements.model.entities.movements.MovementByAccount;
 import com.devsu.banking.account_movements.model.entities.movements.Movements;
 import com.devsu.banking.account_movements.model.entities.movements.gateways.MovementsRepositoryGateway;
 import com.devsu.banking.account_movements.r2dbc.mapper.MovementMapper;
 import com.devsu.banking.account_movements.r2dbc.repositories.movements.MovementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,6 +34,7 @@ public class MovementAdapterRepository implements MovementsRepositoryGateway {
                 .map(movementMapper::toModel);
     }
 
+    @Override
     public Mono<Movements> updateMovement(Movements movements) {
 
         var id = Optional.ofNullable(movements)
@@ -45,40 +50,17 @@ public class MovementAdapterRepository implements MovementsRepositoryGateway {
 
     }
 
+    @Override
+    public Flux<MovementByAccount> fetchMovementByAccountId(AccountID accountID) {
+        var accountId = UUID.fromString(accountID.id());
+        return movementRepository.findByAccountId(accountId)
+                .map(movementMapper::toModelByAccount);
+    }
 
+    @Override
+    public Flux<MovementByAccount> fetchMovementsAccountsByOwner(UUID ownerId, LocalDate initialDate, LocalDate finalDate) {
+        return movementRepository.findMovementsAccountsByUser(ownerId, initialDate, finalDate)
+                .map(movementMapper::toModelByAccount);
+    }
 
-
-    //    private final AccountRepository accountRepository;
-//    private final AccountMapper accountMapper;
-//
-//    @Override
-//    public Mono<Account> findByNumber(String accountNumber, String accountType, Boolean status) {
-//        return accountRepository.findByAccountNumberAndAccountTypeAndStatus(accountNumber, accountType, status)
-//                .map(accountMapper::toDomain);
-//    }
-//
-//    @Override
-//    public Mono<Account> save(Account account) {
-//        return Mono.just(account)
-//                .map(accountMapper::toEntity)
-//                .flatMap(accountRepository::save)
-//                .map(accountMapper::toDomain);
-//    }
-//
-//    public Mono<Account> updateAccount(Account account) {
-//
-//        var accountNumber = account.getId().id();
-//        var accountType = account.getType().name();
-//
-//        var accountStatus = switch (account.getStatus()) {
-//            case ACTIVE -> true;
-//            case INACTIVE, SUSPENDED -> false;
-//        };
-//
-//        return accountRepository.findByAccountNumberAndAccountTypeAndStatus(accountNumber, accountType, accountStatus)
-//                .switchIfEmpty(Mono.error(new BusinessException(BusinessErrorMessage.ACCOUNT_NOT_FOUND)))
-//                .doOnNext(accountFounded -> accountMapper.partialUpdate(account, accountFounded))
-//                .flatMap(accountRepository::save)
-//                .map(accountMapper::toDomain);
-//    }
 }

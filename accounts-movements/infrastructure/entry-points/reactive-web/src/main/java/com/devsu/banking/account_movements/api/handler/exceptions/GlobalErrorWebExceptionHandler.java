@@ -6,7 +6,6 @@ import com.devsu.banking.account_movements.model.commons.exceptions.dto.ErrorDes
 import com.devsu.banking.account_movements.model.commons.exceptions.dto.ErrorResponse;
 import com.devsu.banking.account_movements.model.commons.exceptions.messages.TechnicalErrorMessage;
 import org.springframework.boot.autoconfigure.web.WebProperties;
-import org.springframework.boot.autoconfigure.web.WebProperties.Resources;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
@@ -70,7 +69,6 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
     }
 
     private Mono<ErrorDescription> buildErrorResponse(Throwable throwable) {
-        throwable.printStackTrace();
         return Mono.just(ErrorDescription.builder()
                 .reason(TechnicalErrorMessage.UNEXPECTED_EXCEPTION.getMessage())
                 .code(TechnicalErrorMessage.UNEXPECTED_EXCEPTION.getCode())

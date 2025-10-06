@@ -17,7 +17,8 @@ public enum BusinessErrorMessage {
     SUSPENDED_ACCOUNT("BU_0014", "Account Suspended."),
     INSUFFICIENT_FUNDS("BU_0015", "Insufficient Funds."),
     INVALID_AMOUNT("BU_0016", "Invalid amount."),
-    INVALID_MOVEMENT_TYPE("BU_0017", "Invalid amount type."),
+    INVALID_MOVEMENT_TYPE("BU_0017", "Invalid movement type."),
+    MOVEMENT_NOT_FOUND("BU_0018", "Movement not founded."),
     MISSING_REQUIRED_FIELD("PB_0002", "Parameters not found");
 
     private final String code;
