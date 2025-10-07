@@ -1,7 +1,9 @@
-FROM eclipse-temurin:21-jdk-alpine
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
 VOLUME /tmp
-COPY *.jar accountmovements.jar
-ENV JAVA_OPTS=" -Xshareclasses:name=cacheapp,cacheDir=/cache,nonfatal -XX:+UseContainerSupport -XX:MaxRAMPercentage=70 -Djava.security.egd=file:/dev/./urandom"
-# Replace with a non-root user to avoid running the container with excessive privileges
+RUN addgroup -S app && adduser -S -G app appuser
+
+COPY *.jar /app/accountmovements.jar
 USER appuser
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS  -jar accountmovements.jar" ]
+
+ENTRYPOINT ["/opt/java/openjdk/bin/java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=70", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app/accountmovements.jar"]

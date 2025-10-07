@@ -1,0 +1,97 @@
+version: "3.9"
+name: banking-challenge
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-banking}
+      POSTGRES_USER: ${POSTGRES_USER:-devsu}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-devsu}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-devsu} -d ${POSTGRES_DB:-banking}"]
+      interval: 5s
+      timeout: 3s
+      retries: 25
+    networks: [banknet]
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBIT_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_PASSWORD:-guest}
+    ports:
+      - "${RABBIT_AMQP_PORT:-5672}:5672"
+      - "${RABBIT_HTTP_PORT:-15672}:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 25
+    networks: [banknet]
+
+  person-customer:
+    build:
+      context: ./person-customer
+      dockerfile: deployment/Dockerfile
+    depends_on:
+      postgres: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+    environment:
+      SPRING_R2DBC_URL: r2dbc:postgresql://postgres:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-banking}
+      SPRING_R2DBC_USERNAME: ${POSTGRES_USER:-devsu}
+      SPRING_R2DBC_PASSWORD: ${POSTGRES_PASSWORD:-devsu}
+
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: ${RABBIT_AMQP_PORT:-5672}
+      SPRING_RABBITMQ_USERNAME: ${RABBIT_USER:-guest}
+      SPRING_RABBITMQ_PASSWORD: ${RABBIT_PASSWORD:-guest}
+
+      SERVER_PORT: 8081
+    ports:
+      - "${PERSON_CUSTOMER_PORT:-8081}:8081"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8081/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    networks: [banknet]
+
+  account-movements:
+    build:
+      context: ./accounts-movements
+      dockerfile: deployment/Dockerfile
+    depends_on:
+      postgres: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+      person-customer: { condition: service_healthy }
+    environment:
+      SPRING_R2DBC_URL: r2dbc:postgresql://postgres:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-banking}
+      SPRING_R2DBC_USERNAME: ${POSTGRES_USER:-devsu}
+      SPRING_R2DBC_PASSWORD: ${POSTGRES_PASSWORD:-devsu}
+
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: ${RABBIT_AMQP_PORT:-5672}
+      SPRING_RABBITMQ_USERNAME: ${RABBIT_USER:-guest}
+      SPRING_RABBITMQ_PASSWORD: ${RABBIT_PASSWORD:-guest}
+
+      SERVER_PORT: 8082
+    ports:
+      - "${ACCOUNT_MOVEMENTS_PORT:-8082}:8082"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8082/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    networks: [banknet]
+
+networks:
+  banknet:
+
+volumes:
+  pgdata:

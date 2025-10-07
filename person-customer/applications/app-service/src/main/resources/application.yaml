@@ -17,10 +17,10 @@ spring:
     include: null
 
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+    host: ${RABBIT_HOST:localhost}
+    port: ${RABBIT_PORT:5672}
+    username: ${RABBIT_USER:guest}
+    password: ${RABBIT_PASSWORD:guest}
     virtual-host: /
 management:
   endpoints:
@@ -35,9 +35,9 @@ cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
 adapters:
   r2dbc:
-    host: localhost   # o el nombre del servicio docker-compose
-    port: 5436
-    database: postgres
-    schema: public
-    username: postgres
-    password: mysecretpassword
+    host: ${DB_HOST:localhost}   # o el nombre del servicio docker-compose
+    port: ${DB_PORT:5436}
+    database: ${DB_NAME:postgres}
+    schema: ${DB_SCHEMA:public}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:mysecretpassword}
