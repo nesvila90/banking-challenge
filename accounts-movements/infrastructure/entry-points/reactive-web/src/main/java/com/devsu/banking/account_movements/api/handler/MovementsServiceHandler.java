@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import static com.devsu.banking.account_movements.api.utils.ServerRequestUtils.getPathVariable;
+import static java.util.UUID.fromString;
 
 @Component
 @RequiredArgsConstructor
@@ -67,7 +68,7 @@ public class MovementsServiceHandler {
     }
 
     private static FetchOwnerMovementsGroupedByAccounts mapQuery(Tuple3<String, LocalDate, LocalDate> objects) {
-        return new FetchOwnerMovementsGroupedByAccounts(new OwnerId(UUID.fromString(objects.getT1())), objects.getT2(), objects.getT3());
+        return new FetchOwnerMovementsGroupedByAccounts(new OwnerId(fromString(objects.getT1())), objects.getT2(), objects.getT3());
     }
 
     private static FetchMovementsByAccountQuery mapQuery(Tuple2<String, String> objects) {
