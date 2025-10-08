@@ -15,7 +15,7 @@ public interface MovementsRepositoryGateway {
 
     Mono<Movements> updateMovement(Movements movements);
 
-    Flux<MovementByAccount> fetchMovementByAccountId(AccountID accountID);
+    Flux<Movements> fetchMovementByAccountId(AccountID accountID);
 
     Flux<MovementByAccount> fetchMovementsAccountsByOwner(UUID ownerId, LocalDate initialDate, LocalDate finalDate);
 }

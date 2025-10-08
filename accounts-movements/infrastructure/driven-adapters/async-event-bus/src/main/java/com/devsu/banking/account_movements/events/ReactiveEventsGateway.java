@@ -37,6 +37,6 @@ public class ReactiveEventsGateway implements EventsGateway {
                 .withData("application/json", JsonCloudEventData.wrap(om.valueToTree(event)))
                 .build();
 
-         return from(domainEventBus.emit(eventCloudEvent));
+        return from(domainEventBus.emit(eventCloudEvent));
     }
 }

@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 public record RegisterMovementCommand(
         MovementType type,
-        AccountID accountID,
+        AccountID accountNumber,
         AccountType accountType,
         BigDecimal amount
 ) implements Command {

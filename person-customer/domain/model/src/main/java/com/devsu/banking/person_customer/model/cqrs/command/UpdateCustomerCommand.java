@@ -5,4 +5,5 @@ import com.devsu.banking.person_customer.model.person.Person;
 import lombok.Builder;
 
 @Builder
-public record UpdateCustomerCommand (Person personData, Customer customerData, String codeId) { }
+public record UpdateCustomerCommand(Person personData, Customer customerData, String codeId) {
+}

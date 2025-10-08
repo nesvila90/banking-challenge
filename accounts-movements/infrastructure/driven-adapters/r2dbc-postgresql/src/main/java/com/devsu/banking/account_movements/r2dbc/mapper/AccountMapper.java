@@ -34,6 +34,7 @@ public interface AccountMapper {
     AccountEntity toEntity(Account account);
 
     @Mapping(source = "id", target = "id.id")
+    @Mapping(source = "accountType", target = "id.accountType")
     @Mapping(source = "ownerId", target = "customerId.id")
     @Mapping(source = "accountType", target = "type")
     @Mapping(source = "status", target = "accountStatus")

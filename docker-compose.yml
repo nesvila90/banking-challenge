@@ -14,11 +14,11 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./initdb:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-devsu} -d ${POSTGRES_DB:-banking}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-devsu} -d ${POSTGRES_DB:-banking}" ]
       interval: 5s
       timeout: 3s
       retries: 25
-    networks: [banknet]
+    networks: [ banknet ]
 
   rabbitmq:
     image: rabbitmq:3.13-management
@@ -29,11 +29,11 @@ services:
       - "${RABBIT_AMQP_PORT:-5672}:5672"
       - "${RABBIT_HTTP_PORT:-15672}:15672"
     healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
       interval: 5s
       timeout: 3s
       retries: 25
-    networks: [banknet]
+    networks: [ banknet ]
 
   person-customer:
     build:
@@ -56,11 +56,11 @@ services:
     ports:
       - "${PERSON_CUSTOMER_PORT:-8081}:8081"
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8081/actuator/health"]
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8081/actuator/health" ]
       interval: 10s
       timeout: 5s
       retries: 30
-    networks: [banknet]
+    networks: [ banknet ]
 
   account-movements:
     build:
@@ -84,11 +84,11 @@ services:
     ports:
       - "${ACCOUNT_MOVEMENTS_PORT:-8082}:8082"
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8082/actuator/health"]
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8082/actuator/health" ]
       interval: 10s
       timeout: 5s
       retries: 30
-    networks: [banknet]
+    networks: [ banknet ]
 
 networks:
   banknet:

@@ -13,6 +13,8 @@ import java.util.UUID;
 public interface AccountRepository extends ReactiveCrudRepository<AccountEntity, UUID>, ReactiveSortingRepository<AccountEntity, UUID> {
 
     Mono<AccountEntity> findByAccountNumberAndAccountTypeAndStatus(String accountNumber, String accountType, Boolean status);
+
     Mono<AccountEntity> findByAccountNumberAndAccountType(String accountNumber, String accountType);
+
     Flux<AccountEntity> findByOwnerId(UUID uuid);
 }

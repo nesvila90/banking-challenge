@@ -23,6 +23,6 @@ public class ReactiveEventsGateway implements EventsGateway {
     @Override
     public Mono<Void> emit(Object event) {
         log.log(Level.INFO, "Sending domain event: {0}: {1}", new String[]{SOME_EVENT_NAME, event.toString()});
-         return from(domainEventBus.emit(new DomainEvent<>(SOME_EVENT_NAME, UUID.randomUUID().toString(), event)));
+        return from(domainEventBus.emit(new DomainEvent<>(SOME_EVENT_NAME, UUID.randomUUID().toString(), event)));
     }
 }

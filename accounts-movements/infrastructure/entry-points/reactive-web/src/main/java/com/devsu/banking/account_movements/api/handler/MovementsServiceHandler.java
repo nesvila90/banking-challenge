@@ -20,9 +20,10 @@ import reactor.util.function.Tuple2;
 import reactor.util.function.Tuple3;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
+import static com.devsu.banking.account_movements.api.utils.ServerRequestUtils.getDateRequestVariable;
 import static com.devsu.banking.account_movements.api.utils.ServerRequestUtils.getPathVariable;
+import static com.devsu.banking.account_movements.api.utils.ServerRequestUtils.getRequestVariable;
 import static java.util.UUID.fromString;
 
 @Component
@@ -33,6 +34,14 @@ public class MovementsServiceHandler {
     private final ChangeMovementUseCase changeMovementUseCase;
     private final FetchMovementsByAccountUseCase fetchMovementsByAccountUseCase;
     private final FetchOwnerMovementsGrouperByAccountsIdUseCase fetchOwnerMovementsGrouperByAccountsIdUseCase;
+
+    private static FetchOwnerMovementsGroupedByAccounts mapQuery(Tuple3<String, LocalDate, LocalDate> objects) {
+        return new FetchOwnerMovementsGroupedByAccounts(new OwnerId(fromString(objects.getT1())), objects.getT2(), objects.getT3());
+    }
+
+    private static FetchMovementsByAccountQuery mapQuery(Tuple2<String, String> objects) {
+        return new FetchMovementsByAccountQuery(new AccountID(objects.getT1(), AccountType.from(objects.getT2())));
+    }
 
     public Mono<ServerResponse> handleRegisterMovementsUseCase(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(RegisterMovementCommand.class)
@@ -57,21 +66,13 @@ public class MovementsServiceHandler {
     }
 
     public Mono<ServerResponse> handleFetchMovementsGroupedByAccountsByOwner(ServerRequest serverRequest) {
-        var accountNumber = getPathVariable(serverRequest, "clienteId", String.class);
-        var fromDate = getPathVariable(serverRequest, "desde", LocalDate.class);
-        var untilDate = getPathVariable(serverRequest, "hasta", LocalDate.class);
+        var accountNumber = getRequestVariable(serverRequest, "clienteId", String.class);
+        var fromDate = getDateRequestVariable(serverRequest, "desde", LocalDate.class);
+        var untilDate = getDateRequestVariable(serverRequest, "hasta", LocalDate.class);
         return Mono.zip(accountNumber, fromDate, untilDate)
                 .map(MovementsServiceHandler::mapQuery)
                 .flatMapMany(fetchOwnerMovementsGrouperByAccountsIdUseCase::handle)
                 .collectList()
                 .flatMap(ServerResponse.ok()::bodyValue);
-    }
-
-    private static FetchOwnerMovementsGroupedByAccounts mapQuery(Tuple3<String, LocalDate, LocalDate> objects) {
-        return new FetchOwnerMovementsGroupedByAccounts(new OwnerId(fromString(objects.getT1())), objects.getT2(), objects.getT3());
-    }
-
-    private static FetchMovementsByAccountQuery mapQuery(Tuple2<String, String> objects) {
-        return new FetchMovementsByAccountQuery(new AccountID(objects.getT1(), AccountType.from(objects.getT2())));
     }
 }

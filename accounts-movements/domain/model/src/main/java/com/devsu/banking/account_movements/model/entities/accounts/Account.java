@@ -30,11 +30,11 @@ public class Account {
     @Getter
     private final AccountType type;
     @Getter
+    private final String accountNumber;
+    @Getter
     private AccountID id;
     @Getter
     private OwnerId ownerId;
-    @Getter
-    private final String accountNumber;
     @Getter
     private BigDecimal balance;
     private OverdraftPolicy overdraftPolicy;
@@ -62,24 +62,6 @@ public class Account {
         this.ownerId = ownerId;
     }
 
-    public void setOverdraftPolicy(OverdraftPolicy overdraftPolicy) {
-        this.overdraftPolicy = overdraftPolicy;
-    }
-
-    public Tuple2<Account, Movements> applyMovement(RegisterMovementCommand command, AccountID sourceAccountId) {
-        var amount = Optional.ofNullable(command.amount())
-                .orElseThrow(() -> new BusinessException(INVALID_AMOUNT));
-        var movementType = Optional.ofNullable(command.type())
-                .orElseThrow(() -> new BusinessException(INVALID_MOVEMENT_TYPE));
-
-        validateAccountToAddMovement();
-        calculateNewBalance(balance, amount, movementType);
-        validateOverdraft();
-        var movementAdded = addMovement(sourceAccountId, movementType, amount);
-        return Tuples.of(this, movementAdded);
-    }
-
-
     public static Account from(AccountSnapshot snapshot) {
         if (snapshot == null) return null;
         var initialBalance = Optional.ofNullable(snapshot.getInitialBalance()).orElse(ZERO);
@@ -100,6 +82,23 @@ public class Account {
                 snapshot.getId(),              // AccountID
                 ownerId                        // OwnerId
         );
+    }
+
+    public void setOverdraftPolicy(OverdraftPolicy overdraftPolicy) {
+        this.overdraftPolicy = overdraftPolicy;
+    }
+
+    public Tuple2<Account, Movements> applyMovement(RegisterMovementCommand command, AccountID sourceAccountId) {
+        var amount = Optional.ofNullable(command.amount())
+                .orElseThrow(() -> new BusinessException(INVALID_AMOUNT));
+        var movementType = Optional.ofNullable(command.type())
+                .orElseThrow(() -> new BusinessException(INVALID_MOVEMENT_TYPE));
+
+        validateAccountToAddMovement();
+        calculateNewBalance(balance, amount, movementType);
+        validateOverdraft();
+        var movementAdded = addMovement(sourceAccountId, movementType, amount);
+        return Tuples.of(this, movementAdded);
     }
 
     //private methods

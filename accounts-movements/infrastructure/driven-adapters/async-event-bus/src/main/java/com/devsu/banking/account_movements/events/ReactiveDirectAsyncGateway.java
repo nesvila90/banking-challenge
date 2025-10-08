@@ -30,12 +30,12 @@ public class ReactiveDirectAsyncGateway /* implements Gateway from domain */ {
     public Mono<Void> runRemoteJob(Object command/*change for proper model*/) throws JsonProcessingException {
         log.log(Level.INFO, "Sending command: {0}: {1}", new String[]{SOME_COMMAND_NAME, command.toString()});
         CloudEvent commandCloudEvent = CloudEventBuilder.v1() //
-                                .withId(UUID.randomUUID().toString()) //
-                                .withSource(URI.create("https://spring.io/foos"))//
-                                .withType(SOME_COMMAND_NAME) //
-                                .withTime(OffsetDateTime.now())
-                                .withData("application/json", JsonCloudEventData.wrap(om.valueToTree(command)))
-                                .build();
+                .withId(UUID.randomUUID().toString()) //
+                .withSource(URI.create("https://spring.io/foos"))//
+                .withType(SOME_COMMAND_NAME) //
+                .withTime(OffsetDateTime.now())
+                .withData("application/json", JsonCloudEventData.wrap(om.valueToTree(command)))
+                .build();
 
         return gateway.sendCommand(commandCloudEvent, TARGET_NAME);
     }

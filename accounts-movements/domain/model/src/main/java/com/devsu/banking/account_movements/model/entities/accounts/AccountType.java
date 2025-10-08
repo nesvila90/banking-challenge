@@ -4,7 +4,7 @@ public enum AccountType {
     SAVINGS,
     CHECKING;
 
-    public static AccountType from(String type){
+    public static AccountType from(String type) {
         return AccountType.valueOf(type.toUpperCase());
     }
 }

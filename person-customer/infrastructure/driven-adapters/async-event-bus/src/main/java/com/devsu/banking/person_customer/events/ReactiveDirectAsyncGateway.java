@@ -21,13 +21,13 @@ public class ReactiveDirectAsyncGateway /* implements Gateway from domain */ {
     private final DirectAsyncGateway gateway;
 
 
-    public Mono<Void> runRemoteJob(Object command/*change for proper model*/)  {
+    public Mono<Void> runRemoteJob(Object command/*change for proper model*/) {
         log.log(Level.INFO, "Sending command: {0}: {1}", new String[]{SOME_COMMAND_NAME, command.toString()});
         return gateway.sendCommand(new Command<>(SOME_COMMAND_NAME, UUID.randomUUID().toString(), command),
-                        TARGET_NAME);
+                TARGET_NAME);
     }
 
-    public Mono<Object> requestForRemoteData(Object query/*change for proper model*/)  {
+    public Mono<Object> requestForRemoteData(Object query/*change for proper model*/) {
         log.log(Level.INFO, "Sending query request: {0}: {1}", new String[]{SOME_QUERY_NAME, query.toString()});
         return gateway.requestReply(new AsyncQuery<>(SOME_QUERY_NAME, query), TARGET_NAME, Object.class/*change for proper model*/);
     }

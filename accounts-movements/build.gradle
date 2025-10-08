@@ -1,12 +1,12 @@
 buildscript {
-	ext {
-		cleanArchitectureVersion = '3.26.1'
-		springBootVersion = '3.5.4'
-		sonarVersion = '6.3.1.5724'
-		jacocoVersion = '0.8.13'
-		pitestVersion = '1.19.0-rc.1'
+    ext {
+        cleanArchitectureVersion = '3.26.1'
+        springBootVersion = '3.5.4'
+        sonarVersion = '6.3.1.5724'
+        jacocoVersion = '0.8.13'
+        pitestVersion = '1.19.0-rc.1'
         lombokVersion = '1.18.38'
-	}
+    }
 }
 
 plugins {
@@ -23,7 +23,7 @@ sonar {
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.modules", "${modules.join(',')}"
         property "sonar.sources", "src,deployment,settings.gradle,main.gradle,build.gradle,${modules.collect { "${it}/build.gradle" }.join(',')}"
-        property "sonar.exclusions","**/MainApplication.java"
+        property "sonar.exclusions", "**/MainApplication.java"
         property "sonar.tests", "src/test"
         property "sonar.java.binaries", "**/build/classes/java/main"
         property "sonar.junit.reportsPath", "**/build/test-results/test"

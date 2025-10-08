@@ -23,7 +23,7 @@ public class RegisterMovementsUseCase {
     private final MovementsRepositoryGateway movementRepositoryGateway;
 
     public Mono<Movements> handle(RegisterMovementCommand registerMovementCommand) {
-        return accountsRepositoryGateway.findActiveAccountsByNumberAndType(registerMovementCommand.accountID())
+        return accountsRepositoryGateway.findActiveAccountsByNumberAndType(registerMovementCommand.accountNumber())
                 .switchIfEmpty(Mono.error(new BusinessException(ACCOUNT_NOT_FOUND)))
                 .map(Account::from)
                 .doOnNext(this::addOverdraftPolicy)

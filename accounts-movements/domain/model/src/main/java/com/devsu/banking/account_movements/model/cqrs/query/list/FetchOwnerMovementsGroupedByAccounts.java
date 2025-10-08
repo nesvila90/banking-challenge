@@ -5,4 +5,5 @@ import com.devsu.banking.account_movements.model.entities.accounts.ids.OwnerId;
 
 import java.time.LocalDate;
 
-public record FetchOwnerMovementsGroupedByAccounts(OwnerId ownerId, LocalDate initialDate, LocalDate finalDate) implements Query { }
+public record FetchOwnerMovementsGroupedByAccounts(OwnerId ownerId, LocalDate initialDate, LocalDate finalDate) implements Query {
+}

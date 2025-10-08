@@ -9,7 +9,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 public class PageDTO<T> {
 
-  private List<T> content;
-  private PageMetadata pageMetadata;
+    private List<T> content;
+    private PageMetadata pageMetadata;
 
 }

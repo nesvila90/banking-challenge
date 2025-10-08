@@ -16,9 +16,31 @@ import java.util.UUID;
 public interface MovementRepository extends ReactiveCrudRepository<MovementEntity, UUID>, ReactiveSortingRepository<MovementEntity, UUID> {
 
     @Query(value = """ 
-            SELECT * FROM account a INNER JOIN public.movement m on a.id = m.account_id 
-                     where a.owner_id = :ownerId and a.at between (:initialDate, :finalDate)
-                     order by account_number, at desc
+            SELECT
+              a.id               AS account_id,
+              a.owner_id         AS owner_id,
+              a.account_number   AS account_number,
+              a.account_type     AS account_type,
+              a.initial_balance  AS initial_balance,
+              a.current_balance  AS current_balance,
+              a.status           AS status,
+              a.version          AS version,
+              a.created_at       AS account_created_at,
+              a.updated_at       AS account_updated_at,
+            
+              m.id               AS movement_id,
+              m.account_id       AS movement_account_id,
+              m.at               AS at,
+              m.movement_type    AS movement_type,
+              m.amount           AS amount,
+              m.balance_after    AS balance_after,
+              m.created_at       AS movement_created_at
+            FROM public.account a
+            JOIN public.movement m ON a.id = m.account_id
+            WHERE a.owner_id = :ownerId
+              AND m.at BETWEEN :initialDate AND :finalDate
+            ORDER BY a.account_number, m.at DESC;
+            
             """)
     Flux<MovementsByAccountProjections> findMovementsAccountsByUser(@Param("ownerId") UUID ownerId,
                                                                     @Param("initialDate") LocalDate initialDate,

@@ -18,8 +18,9 @@ public class MovementsPersonRouter {
         return route(
                 POST("/api/movimientos"), serviceHandler::handleRegisterMovementsUseCase)
                 .andRoute(PUT("/api/movimientos"), serviceHandler::handleChangeMovementsDataUseCase)
-                .andRoute(GET("/api/movimientos/{codeId}"), serviceHandler::handleFetchMovementsByAccount)
                 .andRoute(GET("/api/movimientos/reportes"), serviceHandler::handleFetchMovementsGroupedByAccountsByOwner)
+                .andRoute(GET("/api/movimientos/{codeId}"), serviceHandler::handleFetchMovementsByAccount)
+
                 ;
     }
 }

@@ -51,10 +51,12 @@ class ReactiveEventsGatewayTest {
         verify(domainEventBus, times(1)).emit(any(CloudEvent.class));
     }
 
-   @Test
+    @Test
     void testEmitConstructsCloudEvent() {
         Object event = new Object() {
-            public String toString() { return "testEvent"; }
+            public String toString() {
+                return "testEvent";
+            }
         };
 
         when(objectMapper.valueToTree(event)).thenReturn(mock(ObjectNode.class));

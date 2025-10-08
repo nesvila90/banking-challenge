@@ -1,5 +1,6 @@
 package com.devsu.banking.account_movements.r2dbc.entity;
 
+import com.devsu.banking.account_movements.model.entities.accounts.ids.AccountID;
 import com.devsu.banking.account_movements.model.entities.movements.MovementType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -25,6 +27,8 @@ public class MovementEntity {
     private UUID id;
     @Column("account_id")
     private UUID accountId;
+    @Transient
+    private AccountID accountID;
     @Column("at")
     private LocalDateTime at;
     @Column("movement_type")

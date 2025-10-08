@@ -51,16 +51,18 @@ public class MovementAdapterRepository implements MovementsRepositoryGateway {
     }
 
     @Override
-    public Flux<MovementByAccount> fetchMovementByAccountId(AccountID accountID) {
+    public Flux<Movements> fetchMovementByAccountId(AccountID accountID) {
         var accountId = UUID.fromString(accountID.id());
         return movementRepository.findByAccountId(accountId)
-                .map(movementMapper::toModelByAccount);
+                .map(movementMapper::toModel);
     }
 
     @Override
     public Flux<MovementByAccount> fetchMovementsAccountsByOwner(UUID ownerId, LocalDate initialDate, LocalDate finalDate) {
         return movementRepository.findMovementsAccountsByUser(ownerId, initialDate, finalDate)
-                .map(movementMapper::toModelByAccount);
+                .collectList()
+                .flatMapMany(rows -> Flux.fromIterable(movementMapper.groupByAccount(rows)));
     }
+
 
 }

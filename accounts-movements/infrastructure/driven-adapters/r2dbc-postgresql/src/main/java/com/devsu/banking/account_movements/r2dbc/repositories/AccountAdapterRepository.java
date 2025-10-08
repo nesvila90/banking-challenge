@@ -27,6 +27,7 @@ public class AccountAdapterRepository implements AccountsRepositoryGateway {
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
 
+
     @Override
     public Mono<AccountSnapshot> findActiveAccountsByNumberAndType(AccountID accountID) {
         return accountRepository.findByAccountNumberAndAccountTypeAndStatus(accountID.id(), accountID.accountType().name(), TRUE)
@@ -81,11 +82,12 @@ public class AccountAdapterRepository implements AccountsRepositoryGateway {
     }
 
     //private methods
-    private static Boolean resolveStatus(Account account) {
+    private Boolean resolveStatus(Account account) {
         return switch (account.getStatus()) {
             case ACTIVE -> true;
             case INACTIVE, SUSPENDED -> false;
         };
     }
+
 
 }

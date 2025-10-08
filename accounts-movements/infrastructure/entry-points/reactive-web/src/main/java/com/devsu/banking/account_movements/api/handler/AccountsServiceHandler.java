@@ -33,6 +33,14 @@ public class AccountsServiceHandler {
     private final FetchActiveAccountUseCase fetchActiveAccountUseCase;
     private final FetchAccountsByUserUseCase fetchAccountsByUserUseCase;
 
+    private static FetchAccountByCustomerQuery buildFetchAccountByCustomerQuery(String customerId) {
+        return new FetchAccountByCustomerQuery(new OwnerId(UUID.fromString(customerId)));
+    }
+
+    private static FetchAccountDataQuery buildFetchAccountByCustomerQuery(Tuple2<String, String> requestAttributes) {
+        return new FetchAccountDataQuery(new AccountID(requestAttributes.getT1(), from(requestAttributes.getT2())));
+    }
+
     public Mono<ServerResponse> handleCreateAccount(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(CreateAccountCommand.class)
                 .flatMap(createAccountUseCase::createAccount)
@@ -62,14 +70,6 @@ public class AccountsServiceHandler {
                 .timeout(Duration.ofSeconds(10))
                 .collectList()
                 .flatMap(ServerResponse.ok()::bodyValue);
-    }
-
-    private static FetchAccountByCustomerQuery buildFetchAccountByCustomerQuery(String customerId) {
-        return new FetchAccountByCustomerQuery(new OwnerId(UUID.fromString(customerId)));
-    }
-
-    private static FetchAccountDataQuery buildFetchAccountByCustomerQuery(Tuple2<String, String> requestAttributes) {
-        return new FetchAccountDataQuery(new AccountID(requestAttributes.getT1(), from(requestAttributes.getT2())));
     }
 
 }

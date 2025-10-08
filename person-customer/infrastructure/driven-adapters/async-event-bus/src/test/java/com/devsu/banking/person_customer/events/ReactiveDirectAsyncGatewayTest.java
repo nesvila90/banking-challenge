@@ -31,7 +31,7 @@ class ReactiveDirectAsyncGatewayTest {
     }
 
     @Test
-    void testRunRemoteJobSendsCommand()  {
+    void testRunRemoteJobSendsCommand() {
         Object command = new Object() {
             public String toString() {
                 return "testCommand";
@@ -48,7 +48,7 @@ class ReactiveDirectAsyncGatewayTest {
     }
 
     @Test
-    void testRequestForRemoteDataSendsQuery()  {
+    void testRequestForRemoteDataSendsQuery() {
         Object query = new Object() {
             public String toString() {
                 return "testQuery";

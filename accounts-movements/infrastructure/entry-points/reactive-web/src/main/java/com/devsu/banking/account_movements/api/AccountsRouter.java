@@ -20,6 +20,6 @@ public class AccountsRouter {
                 .andRoute(PATCH("/api/cuentas"), accountsServiceHandler::handleChangeAccountStatus)
                 .andRoute(GET("/api/cuentas/{number}/type/{type}"), accountsServiceHandler::handleFetchAccountData)
                 .andRoute(GET("/api/cuentas/customer/{customerId}"), accountsServiceHandler::handleFetchAccountsByCustomer)
-        ;
+                ;
     }
 }
